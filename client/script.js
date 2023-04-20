@@ -4,8 +4,8 @@ const chatContainer = document.getElementById('chat-container')
 let elementHtml = ''
 
 function setUniqueId() {
-    const date = new Date();
-    const random = Math.random(0,1000).toString(16);
+    const date = (new Date()).getTime();
+    const random = Math.random(1,1000).toString(16);
     return `id-${date}-${random}`
 }
 
@@ -46,15 +46,19 @@ function loader(uniqueIdEle) {
 }
 
 function typeResponseHtml(answer, uniqueId) {
+   
     let timeInterval = null
     let i = 0
-    
-
     const idEle = document.getElementById(uniqueId)
+    console.log(idEle)
+
     timeInterval = setInterval(() => {
+        console.log(i, answer.length)
+
         if(i < answer.length) {
             idEle.innerHTML += answer.charAt(i);
             i++
+            console.log(i, answer.charAt(i))
         } else {
             clearInterval(timeInterval)
         }
@@ -84,23 +88,41 @@ function SubmitEvent() {
 
 
     // 获取openAi返回的信息
-    const result = fetch('https://openaicodex-1b3s.onrender.com', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({prompt})
-    })
-    result.then(res => {
-        console.log(res, res.ok, res.data);
-    })
+    async function postData(url = '', data = {}) {
+        // Default options are marked with *
+        const response = await fetch(url, {
+          method: 'POST', // *GET, POST, PUT, DELETE, etc.
+          mode: 'cors', // no-cors, *cors, same-origin
+          cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+          credentials: 'same-origin', // include, *same-origin, omit
+          headers: {
+            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          redirect: 'follow', // manual, *follow, error
+          referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+          body: JSON.stringify(data) // body data type must match "Content-Type" header
+        });
+        return response.json(); // parses JSON response into native JavaScript objects
+        
+    }
+    postData('https://openaicodex-1b3s.onrender.com', { prompt: prompt })
+    .then(data => {
+        console.log(data); // JSON data parsed by `data.json()` call\
+        // 使用定时器实现打字效果
+        typeResponseHtml(data.result || '', uniqueId)
+    }).finally(() => {
+        clearInterval(loaderInterval) // 清除loader定时器
+    });
+
+ 
   
 
     // const result = {
     //     ok: true,
     //     data: '124'
     // }
-    // clearInterval(loaderInterval) // 清除loader定时器
+    // 
     // if(result.ok) {
     //     // 使用定时器实现打字效果
     //     typeResponseHtml(result.data, uniqueId)
