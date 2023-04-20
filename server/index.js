@@ -15,7 +15,8 @@ app.get('/', async (req, res) => {
 })
 app.post('/', async (req, res) => {
     const {prompt} = req.body
-    const completion = await openai.createCompletion(
+    try{
+      const completion = await openai.createCompletion(
         {
           "prompt":prompt,
           "temperature":0.7,
@@ -25,12 +26,16 @@ app.post('/', async (req, res) => {
             presence_penalty: 0.0,
 //   stop: ["You:"],
           "model": "text-davinci-003",
+          stop: ["\n", " Human:", " AI:"],
         //   "stream":true
         }
       );
-
-      console.log(completion)
-    res.status(200).json({ result: completion.data.choices[0].text });
+      // console.log(completion)
+      res.status(200).send({ result: completion.data.choices[0].text });
+    } catch(e) {
+      res.status(500).send({ error: e });
+    }
+    
 })
 
 

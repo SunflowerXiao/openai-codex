@@ -84,14 +84,18 @@ function SubmitEvent() {
 
 
     // 获取openAi返回的信息
-    const result = fetch('http://localhost:5000/', {
+    const result = fetch('https://openaicodex-1b3s.onrender.com', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({prompt})
     })
-    console.log(result);
+    result.then(res => {
+        console.log(res, res.ok, res.data);
+    })
+  
+
     // const result = {
     //     ok: true,
     //     data: '124'
