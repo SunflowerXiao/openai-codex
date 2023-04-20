@@ -11,7 +11,7 @@ const openai = new OpenAIApi(configuration);
 app.use(cors())
 app.use(express.json())
 app.get('/', async (req, res) => {
-    res.status(200).send('ok')
+    res.status(200).send('hello world')
 })
 app.post('/', async (req, res) => {
     const {prompt} = req.body
