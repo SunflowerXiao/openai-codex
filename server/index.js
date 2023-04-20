@@ -15,19 +15,17 @@ app.get('/', async (req, res) => {
 })
 app.post('/', async (req, res) => {
     const {prompt} = req.body
+    console.log(prompt)
     try{
       const completion = await openai.createCompletion(
         {
-          "prompt":prompt,
-          "temperature":0.7,
-          "max_tokens": 60,
-          "top_p":1,
-            frequency_penalty: 0.5,
-            presence_penalty: 0.0,
-//   stop: ["You:"],
-          "model": "text-davinci-003",
-          stop: ["\n", " Human:", " AI:"],
-        //   "stream":true
+          "prompt": prompt,
+          temperature:0,
+          max_tokens:64,
+          top_p: 1.0,
+          frequency_penalty:0.0,
+          presence_penalty:0.0,
+          stop:["\"\"\""]
         }
       );
       // console.log(completion)
